@@ -1,0 +1,27 @@
+{
+  "name": " U2A2 BITCH",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "This extension was created with the awesome GMCR",
+  "homepage_url": "https://geekon.tech",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "default_locale": "en",
+  "background": {
+    "page": "src/bg/background.html",
+    "persistent": true
+  },
+  "browser_action": {
+    "default_icon": "icons/icon19.png",
+    "default_title": "browser action demo"
+  },
+  "permissions": [
+    "activeTab",
+    "webRequest",
+    "http://localhost:8090/*",
+    "tabs"
+  ]
+}
