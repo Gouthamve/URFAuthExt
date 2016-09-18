@@ -5,16 +5,22 @@
 // });
 
 
-//example of using a message handler from the inject scripts
-chrome.extension.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    console.log(request, sender, sendResponse);
-  	chrome.pageAction.show(sender.tab.id);
-    sendResponse();
-  });
+let handleAskAccess = (cb) => {
+  fetch("http://localhost:8090/askpermission")
+    .then(resp => {
+      if (resp.status == 200)
+        return cb(resp.json())
+      else
+        return Promise.reject(new Error(resp.status))
+    })
+    .catch(err => {
+      console.log(err);
+      alert("Auth failed. Please retry")
+    })
+}
 
-chrome.browserAction.onClicked.addListener(tab => {
-  fetch("http://localhost:8090/auth")
+let handleCheckAccess = () => {
+  fetch("http://localhost:8090/checkpermission")
     .then(resp => {
 
       if (resp.status == 200)
@@ -23,7 +29,6 @@ chrome.browserAction.onClicked.addListener(tab => {
         return Promise.reject(new Error(resp.status))
     })
     .then(data => {
-            
       let code = `
       document.getElementById("email").value = "${data.uname}";
       document.getElementById("pass").value = "${data.password}";
@@ -37,4 +42,18 @@ chrome.browserAction.onClicked.addListener(tab => {
       console.log(err);
       alert("Auth failed. Please retry")
     })
+}
+
+//example of using a message handler from the inject scripts
+chrome.extension.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    console.log(request, sender, sendResponse);
+  	chrome.pageAction.show(sender.tab.id);
+    sendResponse();
+  });
+
+chrome.browserAction.onClicked.addListener(tab => {
+  handleAskAccess(data => {
+    setTimeout(handleCheckAccess, 5000);
+  })
 });
